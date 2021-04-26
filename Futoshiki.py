@@ -1,37 +1,10 @@
+import copy
 import sys
-
-# Checks if all values in a list are different (Except for 0)
-def checkDiff(elems):
-    for elem in elems:
-        #Don't check for 0
-        if(elem == "0"):
-            continue
-
-        # Returns False if a duplicate is found
-        if elems.count(elem) > 1:
-            return False
-
-    # Returns true all elements are "0" or there isn't a duplicate
-    return True
-
-# AllDiff constraint for row and col
-def allDiff(row, col, board):
-    row_elems = []
-    col_elems = []
-
-    for c in range(0, 6, 1):
-        row_elems.append(board[row][c])
-
-    for r in range(0, 6, 1):
-        col_elems.append(board[r][col])
-
-    return checkDiff(row_elems) and checkDiff(col_elems)
-
 
 # initial: Initial Board (2D Array)
 # horiz_constraints: Horizontal Constraints (2D Array)
 # vert_constraints: Vertical Constraints (2D Array)
-# variables: All variables in form xij (List)
+# variables: All variables are strings in form "xij" (List)
 # domains: Domains for all variables (Dictionary)
 class CSP:
     def __init__(self, initial, horiz_constraints, vert_constraints):
@@ -50,22 +23,36 @@ class CSP:
     # Updates neighbors of variable at row,col
     # Used for forward checking
     def updateNeighborDomains(self, row, col):
-        num = self.initial[row][col]
+        num = int(self.initial[row][col])
 
-        # Removes value at i,j from its neighbors domains
+        # Removes value at i,j from its neighbors domains (AllDiff)
         # Column neighbors
         for c in range(0, 6, 1):
             var = "x" + str(row) + str(c)
-            if int(num) in self.domains[var]:
+            if num in self.domains[var]:
                 self.domains[var].remove(int(num))
 
         # Row neighbors
         for r in range(0, 6, 1):
             var = "x" + str(r) + str(col)
-            if int(num) in self.domains[var]:
+            if num in self.domains[var]:
                 self.domains[var].remove(int(num))
 
-        #STILL NEED TO UPDATE NEIGHBORS BASED ON VERTICAL AND HORIZONTAL CONSTRAINTS
+        # Removes values > or < from right neighbor
+        if col < 5:
+            neighbor_var = "x" + str(row) + str(col + 1)
+            if self.horiz_constraints[row][col] == ">":
+                self.domains[neighbor_var] = [x for x in self.domains[neighbor_var] if x < num]
+            elif self.horiz_constraints[row][col] == "<":
+                self.domains[neighbor_var] = [x for x in self.domains[neighbor_var] if x > num]
+
+        # Removes values ^ or v from bottom neighbor
+        if row < 5:
+            neighbor_var = "x" + str(row + 1) + str(col)
+            if self.vert_constraints[row][col] == "v":
+                self.domains[neighbor_var] = [x for x in self.domains[neighbor_var] if x < num]
+            elif self.vert_constraints[row][col] == "^":
+                self.domains[neighbor_var] = [x for x in self.domains[neighbor_var] if x > num]
 
 
     # Updates domains of neighbors for intial values
@@ -76,6 +63,204 @@ class CSP:
                     self.updateNeighborDomains(i, j)
 
 
+    # MRV used for selecting next variable to work on
+    def minimumRemainingValuesHueristic(self, vars):
+        min = 7
+        min_remaining = []
+
+        # Determine min size of remaining domains
+        for var in vars:
+            if(len(self.domains[var]) < min):
+                min = len(self.domains[var])
+
+        # Obtain domains with min size
+        for var in vars:
+            if(len(self.domains[var]) == min):
+                min_remaining.append(var)
+
+        return min_remaining
+
+
+    # Degree Heuristic used for selecting next variable to work on
+    def degreeHueristic(self, vars):
+        # Need to implement
+        print()
+
+
+    # Determines if the given board is consistent with constraints
+    def isConsistent(self, var, assignment):
+        diff = False
+        horiz_const = False
+        vert_const = False
+
+        row = int(var[1])
+        col = int(var[2])
+
+        diff = allDiff(row, col, assignment)
+        horiz_const = self.checkHorizontalConstraint(var, assignment)
+        vert_const = self.checkVerticalConstraint(var, assignment)
+
+        return diff and horiz_const and vert_const
+
+    # Determines if var satisfies horizontal constraints
+    def checkHorizontalConstraint(self, var, assignment):
+        row = int(var[1])
+        col = int(var[2])
+
+        val = int(assignment[row][col])
+
+        valid_right = True
+        valid_left = True
+
+        # Check if there is a inequality to the right
+        if col < 5:
+            neighbor_val = int(assignment[row][col + 1])
+            if neighbor_val == 0:
+                valid_right = True
+            elif self.horiz_constraints[row][col] == ">" and val < neighbor_val:
+                valid_right = False
+            elif self.horiz_constraints[row][col] == "<" and val > neighbor_val:
+                valid_right = False
+
+        # Check if there is a inequality to the left
+        if col > 0:
+            neighbor_val = int(assignment[row][col - 1])
+            if neighbor_val == 0:
+                valid_left = True
+            elif self.horiz_constraints[row][col - 1] == ">" and val > neighbor_val:
+                valid_left = False
+            elif self.horiz_constraints[row][col - 1] == "<" and val < neighbor_val:
+                valid_left = False
+
+        return valid_left and valid_right
+
+
+    # Determines if var satisfies vertical constraints
+    def checkVerticalConstraint(self, var, assignment):
+        row = int(var[1])
+        col = int(var[2])
+
+        val = int(assignment[row][col])
+
+        valid_top = True
+        valid_bottom = True
+
+        # Check if there is a inequality to the bottom
+        if row < 5:
+            neighbor_val = int(assignment[row + 1][col])
+            if neighbor_val == 0:
+                valid_bottom = True
+            elif self.vert_constraints[row][col] == "v" and val < neighbor_val:
+                valid_bottom = False
+            elif self.vert_constraints[row][col] == "^" and val > neighbor_val:
+                valid_bottom = False
+
+        # Check if there is a inequality to the top
+        if row > 0:
+            neighbor_val = int(assignment[row - 1][col])
+            if neighbor_val == 0:
+                valid_top = True
+            elif self.vert_constraints[row - 1][col] == "v" and val > neighbor_val:
+                valid_top = False
+            elif self.vert_constraints[row - 1][col] == "^" and val < neighbor_val:
+                valid_top = False
+
+        return valid_bottom and valid_top
+
+
+# Checks if all values in a list are different (Except for 0)
+def checkDiff(elems):
+    for elem in elems:
+        #Don't check for 0
+        if(elem == "0"):
+            continue
+
+        # Returns False if a duplicate is found
+        if elems.count(elem) > 1:
+            return False
+
+    # Returns true if all elements are "0" or there isn't a duplicate
+    return True
+
+
+# AllDiff constraint for a row and col
+def allDiff(row, col, board):
+    row_elems = []
+    col_elems = []
+
+    for c in range(0, 6, 1):
+        row_elems.append(board[row][c])
+
+    for r in range(0, 6, 1):
+        col_elems.append(board[r][col])
+
+    return checkDiff(row_elems) and checkDiff(col_elems)
+
+
+# Chooses a variable to work on next
+# Uses MRV and Degree Heuristics
+def selectUnassignedVariable(csp, assignment):
+    vars = []
+
+    for i in range(0, 6, 1):
+        for j in range(0, 6, 1):
+            if assignment[i][j] == "0":
+                vars.append("x" + str(i) + str(j))
+
+    vars = csp.minimumRemainingValuesHueristic(vars)
+    #vars = csp.degreeHueristic(vars)
+
+    return vars[0]
+
+
+# Determines if the board is complete
+def isComplete(assignment):
+    for i in range(0, 6, 1):
+        for j in range(0, 6, 1):
+            if assignment[i][j] == "0":
+                return False
+    return True
+
+
+#Backtracking Search
+def backTrackingSearch(csp):
+    initial_copy = copy.deepcopy(csp.initial)
+    return backtrack(csp, initial_copy)
+
+
+#Recursive move of backtracking search
+def backtrack(csp, assignment):
+    if isComplete(assignment):
+        return assignment
+
+    var = selectUnassignedVariable(csp, assignment)
+    #print("New var chosen:" + var)
+    #print("Domain is " + str(csp.domains[var]))
+    row = int(var[1])
+    col = int(var[2])
+
+    for value in csp.domains[var]:
+        #print("Value chosen is : " + str(value))
+        assignment[row][col] = str(value)
+        #for r in range(0, 6, 1):
+            #for c in range(0, 6, 1):
+                #print(assignment[r][c], end=" ")
+            #print()
+
+        #print("Am I consistent? " + str(csp.isConsistent(var, assignment)))
+        if csp.isConsistent(var, assignment):
+
+            #print()
+            result = backtrack(csp, assignment)
+            if result != None:
+                return result
+
+        #print("Row and col are: " + str(row) + " , " + str(col))
+        assignment[row][col] = "0"
+
+        #print()
+
+    return None
 
 
 #---------------------------------Main------------------------------
@@ -127,7 +312,7 @@ for arr in split_input:
     else:
         vert_ineq.append(arr.split(" "))
 
-# Prints the initial state, horizontal and vertical inequalities
+# Prints the initial state, horizontal and vertical inequalities NOT NEEDED IN OUTPUT
 for row in range(0, 6, 1):
     for col in range(0, 6, 1):
         print(initial[row][col], end = " ")
@@ -150,19 +335,29 @@ for row in range(0, 5, 1):
 print()
 
 # Solution for CSP initialized
-solution = CSP(initial, horiz_ineq, vert_ineq)
+problem = CSP(initial, horiz_ineq, vert_ineq)
 
 # Apply forward checking before starting search
-solution.forwardCheck()
+problem.forwardCheck()
+
+#for var in problem.variables:
+#   print(var + ":")
+#   print(problem.domains[var])
+
+solution = backTrackingSearch(problem)
+
+# Print solution
+for row in range(0, 6, 1):
+    for col in range(0, 6, 1):
+        print(solution[row][col], end = " ")
+    print()
 
 input_file.close()
 sys.stdout.close()
 
 
 # TODO
-# Finish updateDomains (need to update based on inequalities)
-# Create backtracking algorithm
-# Implement Select-Unassigned-Value
-# Implement Minimum Remaining Value and Degree Heuristics (used in Select-Unassigned-Value)
-# Clean up the file
+# Implement Degree Heuristic (used in Select-Unassigned-Value)
+# Clean up the code for performance and readability
+# Add comments
 # Create PDF
