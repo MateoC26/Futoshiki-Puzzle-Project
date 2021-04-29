@@ -55,7 +55,7 @@ class CSP:
                 self.domains[neighbor_var] = [x for x in self.domains[neighbor_var] if x > num]
 
 
-    # Updates domains of neighbors for intial values
+    # Updates domains of neighbors for initial values
     def forwardCheck(self):
         for i in range(0, 6, 1):
             for j in range(0, 6, 1):
@@ -70,25 +70,52 @@ class CSP:
 
         # Determine min size of remaining domains
         for var in vars:
-            if(len(self.domains[var]) < min):
+            if len(self.domains[var]) < min:
                 min = len(self.domains[var])
 
         # Obtain domains with min size
         for var in vars:
-            if(len(self.domains[var]) == min):
+            if len(self.domains[var]) == min:
                 min_remaining.append(var)
+
+        #return the smallest domain
 
         return min_remaining
 
 
     # Degree Heuristic used for selecting next variable to work on
-    def degreeHueristic(self, vars):
+    def degreeHueristic(self, vars, degree, assignment):
         # Need to implement
-        print()
 
+        valid_values = []
+
+        current_degree = getDegree(vars, assignment)
+
+        #Checks if current degree is larger than the other
+
+        if current_degree > degree :
+            for var in vars:
+                if len(self.domains[var]) == min:
+                    valid_values.append(var)
+
+
+        return valid_values
+
+    #Get Degree function per domain
+
+    def getDegree(self, vars, assignment):
+
+        horiz_const, vert_const = 0,0
+
+        for var in vars:
+            horiz_const += self.checkHorizontalConstraint(var, assignment)
+            vert_const += self.checkVerticalConstraint(var, assignment)
+
+        return horiz_const + vert_const
 
     # Determines if the given board is consistent with constraints
     def isConsistent(self, var, assignment):
+
         diff = False
         horiz_const = False
         vert_const = False
@@ -169,6 +196,8 @@ class CSP:
 
 
 # Checks if all values in a list are different (Except for 0)
+
+
 def checkDiff(elems):
     for elem in elems:
         #Don't check for 0
@@ -208,7 +237,12 @@ def selectUnassignedVariable(csp, assignment):
                 vars.append("x" + str(i) + str(j))
 
     vars = csp.minimumRemainingValuesHueristic(vars)
-    #vars = csp.degreeHueristic(vars)
+
+    #In case of a tie between the min domain use degreeHeuristic:
+
+    if len(vars) == len(csp.domains):
+        current_degree = csp.getDegree(vars, assignment)
+        vars = csp.degreeHueristic(vars, current_degree, assignment)
 
     return vars[0]
 
