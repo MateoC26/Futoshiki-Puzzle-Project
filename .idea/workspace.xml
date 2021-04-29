@@ -4,10 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/Futoshiki.py" line="67" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6a290573-810f-400b-8d26-acfb3d8a6656" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Futoshiki.py" beforeDir="false" afterPath="$PROJECT_DIR$/Futoshiki.py" afterDir="false" />
-    </list>
+    <list default="true" id="6a290573-810f-400b-8d26-acfb3d8a6656" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Futoshiki.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="239" column="4" selection-start-line="239" selection-start-column="4" selection-end-line="239" selection-end-column="4" />
+            <state relative-caret-position="200">
+              <caret line="239" selection-start-line="239" selection-end-line="239" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -192,7 +189,7 @@
       <option name="presentableId" value="Default" />
       <updated>1618887521951</updated>
       <workItem from="1619481711411" duration="2132000" />
-      <workItem from="1619714018988" duration="2781000" />
+      <workItem from="1619714018988" duration="3031000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1618887647309</created>
@@ -205,11 +202,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4913000" />
+    <option name="totallyTimeSpent" value="5163000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1440" height="804" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.34334764" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -246,8 +242,8 @@
     <entry file="file://$PROJECT_DIR$/../AIProject/15PuzzleProblem.py" />
     <entry file="file://$PROJECT_DIR$/Futoshiki.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="239" column="4" selection-start-line="239" selection-start-column="4" selection-end-line="239" selection-end-column="4" />
+        <state relative-caret-position="200">
+          <caret line="239" selection-start-line="239" selection-end-line="239" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
