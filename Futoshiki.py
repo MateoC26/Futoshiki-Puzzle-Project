@@ -83,35 +83,11 @@ class CSP:
         return min_remaining
 
 
+
+
     # Degree Heuristic used for selecting next variable to work on
-    def degreeHueristic(self, vars, degree, assignment):
-        # Need to implement
-
-        valid_values = []
-
-        current_degree = getDegree(vars, assignment)
-
-        #Checks if current degree is larger than the other
-
-        if current_degree > degree :
-            for var in vars:
-                if len(self.domains[var]) == min:
-                    valid_values.append(var)
 
 
-        return valid_values
-
-    #Get Degree function per domain
-
-    def getDegree(self, vars, assignment):
-
-        horiz_const, vert_const = 0,0
-
-        for var in vars:
-            horiz_const += self.checkHorizontalConstraint(var, assignment)
-            vert_const += self.checkVerticalConstraint(var, assignment)
-
-        return horiz_const + vert_const
 
     # Determines if the given board is consistent with constraints
     def isConsistent(self, var, assignment):
@@ -123,9 +99,11 @@ class CSP:
         row = int(var[1])
         col = int(var[2])
 
+
+
         diff = allDiff(row, col, assignment)
-        horiz_const = self.checkHorizontalConstraint(var, assignment)
-        vert_const = self.checkVerticalConstraint(var, assignment)
+        horiz_const = self.checkHorizontalConstraint(var, assignment)[0]
+        vert_const = self.checkVerticalConstraint(var, assignment)[0]
 
         return diff and horiz_const and vert_const
 
@@ -139,6 +117,8 @@ class CSP:
         valid_right = True
         valid_left = True
 
+        horizontal_constrains = 0
+
         # Check if there is a inequality to the right
         if col < 5:
             neighbor_val = int(assignment[row][col + 1])
@@ -146,8 +126,10 @@ class CSP:
                 valid_right = True
             elif self.horiz_constraints[row][col] == ">" and val < neighbor_val:
                 valid_right = False
+                horizontal_constrains+=1
             elif self.horiz_constraints[row][col] == "<" and val > neighbor_val:
                 valid_right = False
+                horizontal_constrains+=1
 
         # Check if there is a inequality to the left
         if col > 0:
@@ -156,10 +138,12 @@ class CSP:
                 valid_left = True
             elif self.horiz_constraints[row][col - 1] == ">" and val > neighbor_val:
                 valid_left = False
+                horizontal_constrains+=1
             elif self.horiz_constraints[row][col - 1] == "<" and val < neighbor_val:
                 valid_left = False
+                horizontal_constrains+=1
 
-        return valid_left and valid_right
+        return (valid_left and valid_right, horizontal_constrains)
 
 
     # Determines if var satisfies vertical constraints
@@ -168,6 +152,8 @@ class CSP:
         col = int(var[2])
 
         val = int(assignment[row][col])
+
+        vertical_contstrains = 0
 
         valid_top = True
         valid_bottom = True
@@ -179,8 +165,10 @@ class CSP:
                 valid_bottom = True
             elif self.vert_constraints[row][col] == "v" and val < neighbor_val:
                 valid_bottom = False
+                vertical_contstrains += 1
             elif self.vert_constraints[row][col] == "^" and val > neighbor_val:
                 valid_bottom = False
+                vertical_contstrains += 1
 
         # Check if there is a inequality to the top
         if row > 0:
@@ -189,14 +177,53 @@ class CSP:
                 valid_top = True
             elif self.vert_constraints[row - 1][col] == "v" and val > neighbor_val:
                 valid_top = False
+                vertical_contstrains += 1
             elif self.vert_constraints[row - 1][col] == "^" and val < neighbor_val:
                 valid_top = False
+                vertical_contstrains += 1
 
-        return valid_bottom and valid_top
+        return (valid_bottom and valid_top,vertical_contstrains)
 
+def degreeHeuristic(vars,board,csp):
+
+    max_vars = []
+
+    global_max = 0
+
+    for var in vars:
+        max = getDegree(var, board,csp)
+        if global_max < max:
+            global_max = max
+
+    for var in vars:
+        if global_max == getDegree(var, board,csp):
+            max_vars.append(var)
+
+
+    return max_vars
+
+
+def getDegree(var, board,csp):
+
+    degree = 0
+
+    col = int(var[2])
+    row = int(var[1])
+
+    for c in range(0, 6, 1):
+        if board[row][c] == '0':
+            degree += 1
+
+    for c in range(0, 6, 1):
+        if board[row][c] == '0':
+            degree += 1
+
+    vertical_constrains = csp.checkVerticalConstraint(var,board)[1]
+    horizontal_constrains = csp.checkHorizontalConstraint(var,board)[1]
+
+    return degree+vertical_constrains+horizontal_constrains
 
 # Checks if all values in a list are different (Except for 0)
-
 
 def checkDiff(elems):
     for elem in elems:
@@ -240,11 +267,10 @@ def selectUnassignedVariable(csp, assignment):
 
     #In case of a tie between the min domain use degreeHeuristic:
 
-    if len(vars) == len(csp.domains):
-        current_degree = csp.getDegree(vars, assignment)
-        vars = csp.degreeHueristic(vars, current_degree, assignment)
-
-    return vars[0]
+    if len(vars) > 1 :
+        vars = degreeHeuristic(vars,assignment,csp)
+        #vars = vars[0:3]
+    return vars[-1]
 
 
 # Determines if the board is complete
@@ -273,13 +299,14 @@ def backtrack(csp, assignment):
     row = int(var[1])
     col = int(var[2])
 
+
     for value in csp.domains[var]:
         #print("Value chosen is : " + str(value))
         assignment[row][col] = str(value)
         #for r in range(0, 6, 1):
             #for c in range(0, 6, 1):
-                #print(assignment[r][c], end=" ")
-            #print()
+               # print(assignment[r][c], end=" ")
+           # print()
 
         #print("Am I consistent? " + str(csp.isConsistent(var, assignment)))
         if csp.isConsistent(var, assignment):
@@ -313,7 +340,7 @@ vert_ineq = []
 #    except IOError:
 #        print ("There is no such a file, please try again")
 
-input_file = open("SampleInput.txt")
+input_file = open("Input1.txt")
 
 input_str = input_file.read()
 

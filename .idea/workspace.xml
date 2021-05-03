@@ -4,7 +4,9 @@
     <bookmark url="file://$PROJECT_DIR$/Futoshiki.py" line="67" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6a290573-810f-400b-8d26-acfb3d8a6656" name="Default Changelist" comment="" />
+    <list default="true" id="6a290573-810f-400b-8d26-acfb3d8a6656" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Futoshiki.py" beforeDir="false" afterPath="$PROJECT_DIR$/Futoshiki.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Futoshiki.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="239" selection-start-line="239" selection-end-line="239" />
+            <state relative-caret-position="142">
+              <caret line="347" column="35" lean-forward="true" selection-start-line="347" selection-start-column="35" selection-end-line="347" selection-end-column="35" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -28,8 +30,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SampleInput.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+            <state relative-caret-position="308">
+              <caret line="14" column="9" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -55,8 +57,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Input2.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="11" selection-start-column="11" selection-end-column="11" />
+            <state relative-caret-position="154">
+              <caret line="7" column="3" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="3" />
             </state>
           </provider>
         </entry>
@@ -64,8 +66,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Input1.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
+            <state relative-caret-position="352">
+              <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -86,10 +88,17 @@
       <find>constra</find>
       <find>getDe</find>
       <find>degreeH</find>
-      <find>selectUnassignedVariable</find>
       <find>backtrack</find>
       <find>backtrack(csp, assignment)</find>
       <find>csp</find>
+      <find>All</find>
+      <find>updateNeighborDomains</find>
+      <find>allDiff</find>
+      <find>minimumRemainingValuesHueristic</find>
+      <find>degreeHeuristic</find>
+      <find>selectUnassignedVariable</find>
+      <find>print</find>
+      <find>checkHorizontalConstraint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -100,16 +109,16 @@
       <list>
         <option value="$PROJECT_DIR$/Input3.txt" />
         <option value="$PROJECT_DIR$/Input2.txt" />
-        <option value="$PROJECT_DIR$/Input1.txt" />
         <option value="$PROJECT_DIR$/SampleInput.txt" />
         <option value="$PROJECT_DIR$/SampleOutput.txt" />
+        <option value="$PROJECT_DIR$/Input1.txt" />
         <option value="$PROJECT_DIR$/Futoshiki.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="22" />
-    <option name="width" value="1440" />
+    <option name="width" value="1381" />
     <option name="height" value="804" />
   </component>
   <component name="ProjectView">
@@ -189,7 +198,7 @@
       <option name="presentableId" value="Default" />
       <updated>1618887521951</updated>
       <workItem from="1619481711411" duration="2132000" />
-      <workItem from="1619714018988" duration="3031000" />
+      <workItem from="1619714018988" duration="13162000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit">
       <created>1618887647309</created>
@@ -202,12 +211,12 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5163000" />
+    <option name="totallyTimeSpent" value="15294000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="804" extended-state="0" />
+    <frame x="0" y="22" width="1381" height="804" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.34334764" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3584765" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -218,7 +227,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32303372" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32303372" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="bottom" id="Messages" order="11" />
@@ -240,23 +249,6 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../AIProject/15PuzzleProblem.py" />
-    <entry file="file://$PROJECT_DIR$/Futoshiki.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="239" selection-start-line="239" selection-end-line="239" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SampleInput.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/SampleOutput.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="110">
@@ -271,17 +263,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SampleInput.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="14" column="9" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Input2.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        <state relative-caret-position="154">
+          <caret line="7" column="3" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Input1.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
+        <state relative-caret-position="352">
+          <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Futoshiki.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="347" column="35" lean-forward="true" selection-start-line="347" selection-start-column="35" selection-end-line="347" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
