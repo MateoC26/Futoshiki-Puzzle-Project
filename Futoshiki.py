@@ -206,7 +206,7 @@ def degreeHeuristic(vars,board,csp):
 # Used in degreeHeuristic
 def getDegree(var, board,csp):
 
-    degree = 0
+    degree,vertical_constrains,horizontal_constrains = 0,0,0
 
     col = int(var[2])
     row = int(var[1])
@@ -214,6 +214,7 @@ def getDegree(var, board,csp):
     for c in range(0, 6, 1):
         if board[row][c] == '0':
             degree += 1
+
 
     vertical_constrains = csp.checkVerticalConstraint(var,board)[1]
     horizontal_constrains = csp.checkHorizontalConstraint(var,board)[1]
@@ -374,8 +375,3 @@ input_file.close()
 sys.stdout.close()
 
 
-# TODO
-# Implement Degree Heuristic (used in Select-Unassigned-Value)
-# Clean up the code for performance and readability
-# Add comments
-# Create PDF
