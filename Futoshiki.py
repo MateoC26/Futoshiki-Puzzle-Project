@@ -6,6 +6,7 @@ import sys
 # vert_constraints: Vertical Constraints (2D Array)
 # variables: All variables are strings in form "xij" (List)
 # domains: Domains for all variables (Dictionary)
+# degrees: Degrees (# of unassigned neighbors) of all variables (Dictionary)
 class CSP:
     def __init__(self, initial, horiz_constraints, vert_constraints):
         self.initial = initial
@@ -18,6 +19,9 @@ class CSP:
         self.domains = {}
         for var in self.variables:
             self.domains[var] = [1, 2, 3, 4, 5, 6]
+        self.degrees = {}
+        for var in self.variables:
+            self.degrees[var] = 0
 
 
     # Updates neighbors of variable at row,col
@@ -83,12 +87,6 @@ class CSP:
         return min_remaining
 
 
-
-
-    # Degree Heuristic used for selecting next variable to work on
-
-
-
     # Determines if the given board is consistent with constraints
     def isConsistent(self, var, assignment):
 
@@ -99,8 +97,6 @@ class CSP:
         row = int(var[1])
         col = int(var[2])
 
-
-
         diff = allDiff(row, col, assignment)
         horiz_const = self.checkHorizontalConstraint(var, assignment)[0]
         vert_const = self.checkVerticalConstraint(var, assignment)[0]
@@ -108,6 +104,7 @@ class CSP:
         return diff and horiz_const and vert_const
 
     # Determines if var satisfies horizontal constraints
+    # And the number of unassigned horizontal neighbors
     def checkHorizontalConstraint(self, var, assignment):
         row = int(var[1])
         col = int(var[2])
@@ -117,7 +114,7 @@ class CSP:
         valid_right = True
         valid_left = True
 
-        horizontal_constrains = 0
+        horizontal_constraints = 0
 
         # Check if there is a inequality to the right
         if col < 5:
@@ -126,10 +123,10 @@ class CSP:
                 valid_right = True
             elif self.horiz_constraints[row][col] == ">" and val < neighbor_val:
                 valid_right = False
-                horizontal_constrains+=1
+                horizontal_constraints+=1
             elif self.horiz_constraints[row][col] == "<" and val > neighbor_val:
                 valid_right = False
-                horizontal_constrains+=1
+                horizontal_constraints+=1
 
         # Check if there is a inequality to the left
         if col > 0:
@@ -138,22 +135,23 @@ class CSP:
                 valid_left = True
             elif self.horiz_constraints[row][col - 1] == ">" and val > neighbor_val:
                 valid_left = False
-                horizontal_constrains+=1
+                horizontal_constraints+=1
             elif self.horiz_constraints[row][col - 1] == "<" and val < neighbor_val:
                 valid_left = False
-                horizontal_constrains+=1
+                horizontal_constraints+=1
 
-        return (valid_left and valid_right, horizontal_constrains)
+        return (valid_left and valid_right, horizontal_constraints)
 
 
     # Determines if var satisfies vertical constraints
+    # And the number of unassigned vertical neighbors
     def checkVerticalConstraint(self, var, assignment):
         row = int(var[1])
         col = int(var[2])
 
         val = int(assignment[row][col])
 
-        vertical_contstrains = 0
+        vertical_contstraints = 0
 
         valid_top = True
         valid_bottom = True
@@ -165,10 +163,10 @@ class CSP:
                 valid_bottom = True
             elif self.vert_constraints[row][col] == "v" and val < neighbor_val:
                 valid_bottom = False
-                vertical_contstrains += 1
+                vertical_contstraints += 1
             elif self.vert_constraints[row][col] == "^" and val > neighbor_val:
                 valid_bottom = False
-                vertical_contstrains += 1
+                vertical_contstraints += 1
 
         # Check if there is a inequality to the top
         if row > 0:
@@ -177,32 +175,35 @@ class CSP:
                 valid_top = True
             elif self.vert_constraints[row - 1][col] == "v" and val > neighbor_val:
                 valid_top = False
-                vertical_contstrains += 1
+                vertical_contstraints += 1
             elif self.vert_constraints[row - 1][col] == "^" and val < neighbor_val:
                 valid_top = False
-                vertical_contstrains += 1
+                vertical_contstraints += 1
 
-        return (valid_bottom and valid_top,vertical_contstrains)
+        return (valid_bottom and valid_top,vertical_contstraints)
 
+
+# Determines which variables to use next depending on their number of unassigned neighbors
 def degreeHeuristic(vars,board,csp):
-
     max_vars = []
 
     global_max = 0
 
     for var in vars:
-        max = getDegree(var, board,csp)
+        csp.degrees[var] = getDegree(var, board,csp)
+        max = csp.degrees[var]
         if global_max < max:
             global_max = max
 
     for var in vars:
-        if global_max == getDegree(var, board,csp):
+        if global_max == csp.degrees[var]:
             max_vars.append(var)
-
 
     return max_vars
 
 
+# Gets the number of unassigned neighbors
+# Used in degreeHeuristic
 def getDegree(var, board,csp):
 
     degree = 0
@@ -214,17 +215,13 @@ def getDegree(var, board,csp):
         if board[row][c] == '0':
             degree += 1
 
-    for c in range(0, 6, 1):
-        if board[row][c] == '0':
-            degree += 1
-
     vertical_constrains = csp.checkVerticalConstraint(var,board)[1]
     horizontal_constrains = csp.checkHorizontalConstraint(var,board)[1]
 
     return degree+vertical_constrains+horizontal_constrains
 
-# Checks if all values in a list are different (Except for 0)
 
+# Checks if all values in a list are different (Except for 0)
 def checkDiff(elems):
     for elem in elems:
         #Don't check for 0
@@ -266,10 +263,8 @@ def selectUnassignedVariable(csp, assignment):
     vars = csp.minimumRemainingValuesHueristic(vars)
 
     #In case of a tie between the min domain use degreeHeuristic:
-
     if len(vars) > 1 :
         vars = degreeHeuristic(vars,assignment,csp)
-        #vars = vars[0:3]
     return vars[-1]
 
 
@@ -282,44 +277,31 @@ def isComplete(assignment):
     return True
 
 
-#Backtracking Search
+# Backtracking Search
 def backTrackingSearch(csp):
     initial_copy = copy.deepcopy(csp.initial)
     return backtrack(csp, initial_copy)
 
 
-#Recursive move of backtracking search
+# Recursive move of backtracking search
 def backtrack(csp, assignment):
     if isComplete(assignment):
         return assignment
 
     var = selectUnassignedVariable(csp, assignment)
-    #print("New var chosen:" + var)
-    #print("Domain is " + str(csp.domains[var]))
     row = int(var[1])
     col = int(var[2])
 
 
     for value in csp.domains[var]:
-        #print("Value chosen is : " + str(value))
         assignment[row][col] = str(value)
-        #for r in range(0, 6, 1):
-            #for c in range(0, 6, 1):
-               # print(assignment[r][c], end=" ")
-           # print()
 
-        #print("Am I consistent? " + str(csp.isConsistent(var, assignment)))
         if csp.isConsistent(var, assignment):
-
-            #print()
             result = backtrack(csp, assignment)
             if result != None:
                 return result
 
-        #print("Row and col are: " + str(row) + " , " + str(col))
         assignment[row][col] = "0"
-
-        #print()
 
     return None
 
@@ -330,30 +312,31 @@ horiz_ineq = []
 vert_ineq = []
 
 # Ask to initialize the file until found
-#while True:
-#    print("\nEnter the name of the input, ensuring that you type .txt afterwards.\n\nOutput will be written in SampleOutput.txt. Please check your directory. ")
-#    file_name = input();
-#    try:
-#       input_file = open(file_name)
-#       if input_file:
-#           break
-#    except IOError:
-#        print ("There is no such a file, please try again")
+while True:
+    print("\nEnter the name of the input, ensuring that you type .txt afterwards.\n\nOutput will be written in SampleOutput.txt. Please check your directory. ")
+    file_name = input();
+    try:
+       input_file = open(file_name)
+       if input_file:
+           break
+    except IOError:
+        print ("There is no such a file, please try again")
 
-input_file = open("Input1.txt")
+input_file = open(file_name)
 
 input_str = input_file.read()
 
 # Splits with each new line
 split_input = input_str.split('\n')
 
-# Clean the output file
-#file = open("SampleOutput.txt","r+")
-#file.truncate(0)
-#file.close()
 
 # Open output file for writing
-#sys.stdout = open("SampleOutput.txt", "w")
+sys.stdout = open("SampleOutput.txt", "w")
+
+# Clean the output file
+file = open("SampleOutput.txt","r+")
+file.truncate(0)
+file.close()
 
 switch = 0
 curr_elem = ""
@@ -373,37 +356,11 @@ for arr in split_input:
     else:
         vert_ineq.append(arr.split(" "))
 
-# Prints the initial state, horizontal and vertical inequalities NOT NEEDED IN OUTPUT
-for row in range(0, 6, 1):
-    for col in range(0, 6, 1):
-        print(initial[row][col], end = " ")
-    print()
-
-print()
-
-for row in range(0, 6, 1):
-    for col in range(0, 5, 1):
-        print(horiz_ineq[row][col], end = " ")
-    print()
-
-print()
-
-for row in range(0, 5, 1):
-    for col in range(0, 6, 1):
-        print(vert_ineq[row][col], end = " ")
-    print()
-
-print()
-
 # Solution for CSP initialized
 problem = CSP(initial, horiz_ineq, vert_ineq)
 
 # Apply forward checking before starting search
 problem.forwardCheck()
-
-#for var in problem.variables:
-#   print(var + ":")
-#   print(problem.domains[var])
 
 solution = backTrackingSearch(problem)
 
